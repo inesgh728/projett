@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Comparaison des Méthodes de Chiffrement</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: url('https://th.bing.com/th/id/R.072e36d56711ffef4d767dc7862bdf7a?rik=BBNzPVbif8dVgw&pid=ImgRaw&r=0') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      display: flex;
+    }
+    
+
+    .sidebar {
+      width: 220px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 20px;
+      height: 100vh;
+      position: fixed;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .sidebar h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    .sidebar a {
+      display: block;
+      color: #fff;
+      margin: 10px 0;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    .sidebar a:hover {
+      color: #00ffff;
+      text-decoration: underline;
+    }
+
+    .main {
+      margin-left: 240px;
+      width: calc(100% - 240px);
+    }
+
+    header, footer {
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 30px;
+      text-transform: uppercase;
+    }
+
+    .description {
+      background: rgba(22, 19, 30, 0.4);
+      margin: 20px auto;
+      padding: 20px;
+      max-width: 900px;
+      border-radius: 12px;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    h2 {
+      text-align: center;
+      margin-top: 30px;
+      font-size: 26px;
+      color: #fff;
+      text-shadow: 1px 1px 3px #000;
+    }
+
+    .method-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 40px;
+      padding: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .method {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px 20px;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+      text-align: center;
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .method:hover {
+      transform: scale(1.05);
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .method img {
+      width: 70px;
+      height: 70px;
+      margin-bottom: 15px;
+    }
+
+    footer {
+      margin-top: 40px;
+      font-size: 14px;
+    }
+  </style>
+  <script>
+    let clickSound;
+    window.addEventListener('DOMContentLoaded', () => {
+      clickSound = new Audio("https://cdn.pixabay.com/download/audio/2023/01/30/audio_89ed40a793.mp3?filename=soft-click-112190.mp3");
+    });
+    function playClickSound() {
+      if (clickSound) {
+        clickSound.currentTime = 0;
+        clickSound.play();
+      }
+    }
+  </script>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>Navigation</h2>
+    <a href="#description">Description</a>
+    <a href="#methodes">Méthodes</a>
+    <a href="#footer">Contact</a>
+  </div>
+
+  <div class="main">
+    <header>
+      <h1>Comparaison des Méthodes de Chiffrement Classiques</h1>
+    </header>
+
+    <audio autoplay loop>
+      <source src="https://cdn.pixabay.com/download/audio/2022/08/08/audio_a112f80a89.mp3?filename=ambient-piano-logo-116199.mp3" type="audio/mpeg">
+      Votre navigateur ne supporte pas l'audio HTML5.
+    </audio>
+
+    <div class="description" id="description">
+      Ce site présente une étude comparative de différentes méthodes classiques de chiffrement. Il permet aux utilisateurs d’explorer, tester, et comprendre chaque méthode à travers des interfaces interactives.
+    </div>
+    <h2 id="methodes">Méthodes de Chiffrement</h2>
+    <div class="method-list">
+      <a class="method" href="cesar.html" onclick="playClickSound()">
+        <img src="https://cdn-icons-png.flaticon.com/512/598/598496.png" alt="César" >
+        César
+      </a>
+      <a class="method" href="vigenere.html" onclick="playClickSound()">
+        <img src="https://img.icons8.com/ios-filled/100/ffffff/lock.png" alt="Vigenère">
+        Vigenère
+      </a>
+      <a class="method" href="affine.html" onclick="playClickSound()">
+        <img src="https://img.icons8.com/ios-filled/100/ffffff/key.png" alt="Affine">
+        Affine
+      </a>
+      <a class="method" href="Playfair.html" onclick="playClickSound()">
+        <img src="https://img.icons8.com/ios-filled/100/ffffff/security-checked.png" alt="Playfair">
+        Playfair
+      </a>
+      <a class="method" href="Hill.html" onclick="playClickSound()">
+        <img src="https://cdn-icons-png.flaticon.com/512/6591/6591036.png" alt="Hill" >
+        Hill
+      </a>
+      <a class="method" href="grand chiffre.html" onclick="playClickSound()">
+        <img src="https://img.icons8.com/ios-filled/100/ffffff/sorting-arrows-horizontal.png" alt="Grand Chiffre">
+        Grand Chiffre
+      </a>
+      <a class="method" href="Bazories.html" onclick="playClickSound()">
+       <img src="https://cdn-icons-png.flaticon.com/512/3754/3754895.png" alt="Bazeries" >
+        Bazeries
+      </a>
+      <a class="method" href="Beaufort.html" onclick="playClickSound()">
+       <img src="https://cdn-icons-png.flaticon.com/512/3064/3064197.png" alt="Beaufort" />
+        Beaufort
+      </a>
+      <a class="method" href="Chacotique.html" onclick="playClickSound()">
+        <img src="https://img.icons8.com/ios-filled/100/ffffff/galaxy.png" alt="Chaotique">
+        Chaotique
+      </a>
+    </div>
+
+    <footer id="footer">
+      &copy; 2025 - Projet de comparaison des méthodes de chiffrement classiques<br>
+      <a href="cloc.html" style="color:#fff; text-decoration: underline;">Retour à la page principale</a>
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Chiffrement Affine - Texte et Image</title>
+  <style>
+     body {
+      font-family: 'Segoe UI', sans-serif;
+      background-image:url('https://new.almalomat.com/wp-content/uploads/2020/01/%D8%AA%D8%B9%D8%B1%D9%8A%D9%81-%D8%B9%D9%84%D9%85-%D8%A7%D9%84%D8%AA%D8%B4%D9%81%D9%8A%D8%B1-.jpg');
+      background-color: #eef2f7;
+      padding: 30px;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.9); /* خلفية بيضاء شفافة قليلا */
+      padding: 25px;
+      max-width: 950px;
+      margin: auto;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    }
+    .container {
+    background: rgba(255, 255, 255, 0.3); /* شفافية عالية */
+    backdrop-filter: blur(10px); /* تأثير الزجاج */
+    padding: 25px;
+    max-width: 950px;
+    margin: auto;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  }
+
+    h2 {
+      color: #0d0d0e;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .section {
+      margin-bottom: 50px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 8px;
+      color: #0d0d0e;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      margin-bottom: 10px;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #bdc3c7;
+      border-radius: 8px;
+      background-color: #fdfefe;
+    }
+
+    input[type="number"],
+    input[type="file"] {
+      padding: 10px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      background-color: #2980b9;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #1f618d;
+    }
+
+    .images-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .image-container {
+      width: 45%;
+      text-align: center;
+    }
+
+    canvas {
+      max-width: 100%;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    canvas:hover {
+      transform: scale(1.1);
+    }
+
+    @media screen and (max-width: 768px) {
+      .images-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      .image-container {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Texte -->
+    <div class="section">
+      <h2>Chiffrement de Texte - Méthode Affine</h2>
+      <label>Texte à chiffrer :</label>
+      <textarea id="textInput" placeholder="Entrez le texte ici..."></textarea>
+
+      <div class="buttons">
+        <input type="number" id="textKeyA" placeholder="Clé A" />
+        <input type="number" id="textKeyB" placeholder="Clé B" />
+        <button onclick="chiffrerTexte()">Chiffrer</button>
+        <button onclick="dechiffrerTexte()">Déchiffrer</button>
+        <button onclick="enregistrerImage()">Enregistrer</button>
+      </div>
+
+      <label>Texte Chiffré :</label>
+      <textarea id="textOutput" placeholder="Résultat..."></textarea>
+    </div>
+
+    <!-- Image -->
+    <div class="section">
+      <h2>Chiffrement d'Image - Méthode Affine</h2>
+
+      <div class="buttons">
+        <input type="file" id="imageLoader" accept="image/*">
+        <input type="number" id="imageKeyA" placeholder="Clé A" />
+        <input type="number" id="imageKeyB" placeholder="Clé B" />
+        <button onclick="chiffrerImage()">Chiffrer</button>
+        <button onclick="dechiffrerImage()">Déchiffrer</button>
+        <button onclick="enregistrerImage()">Enregistrer</button>
+      </div>
+
+      <div class="images-container">
+        <div class="image-container">
+          <label>Image originale :</label>
+          <canvas id="canvasOriginal" width="300" height="300"></canvas>
+        </div>
+        <div class="image-container">
+          <label>Image chiffrée :</label>
+          <canvas id="canvasModified" width="300" height="300"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="back-btn">
+    <a href="cloc.html">
+      <button>Retour à l'accueil</button>
+    </a>
+  </div>
+
+  <script>
+    // --- Texte ---
+    function chiffrerTexte() {
+      const text = document.getElementById('textInput').value;
+      const keyA = parseInt(document.getElementById('textKeyA').value) || 0;
+      const keyB = parseInt(document.getElementById('textKeyB').value) || 0;
+      let result = '';
+
+      for (let i = 0; i < text.length; i++) {
+        let code = text.charCodeAt(i);
+        result += String.fromCharCode(((keyA * (code - 32) + keyB) % 95) + 32);
+      }
+
+      document.getElementById('textOutput').value = result;
+    }
+
+    function dechiffrerTexte() {
+      const text = document.getElementById('textOutput').value;
+      const keyA = parseInt(document.getElementById('textKeyA').value) || 0;
+      const keyB = parseInt(document.getElementById('textKeyB').value) || 0;
+      let result = '';
+      const mod = 95;
+
+      // Calculate modular inverse of keyA
+      let keyA_inv = modInverse(keyA, mod);
+      
+      if (keyA_inv === -1) {
+        alert('Clé A invalide');
+        return;
+      }
+
+      for (let i = 0; i < text.length; i++) {
+        let code = text.charCodeAt(i);
+        result += String.fromCharCode(((keyA_inv * (code - 32 - keyB)) % mod + mod) % mod + 32);
+      }
+
+      document.getElementById('textInput').value = result;
+    }
+
+    function modInverse(a, m) {
+      for (let x = 1; x < m; x++) {
+        if ((a * x) % m === 1) {
+          return x;
+        }
+      }
+      return -1;
+    }
+
+    // --- Image ---
+    const canvasOriginal = document.getElementById('canvasOriginal');
+    const ctxOriginal = canvasOriginal.getContext('2d');
+    const canvasModified = document.getElementById('canvasModified');
+    const ctxModified = canvasModified.getContext('2d');
+
+    let originalImageData = null;
+
+    document.getElementById('imageLoader').addEventListener('change', function (e) {
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const img = new Image();
+        img.onload = function () {
+          canvasOriginal.width = img.width;
+          canvasOriginal.height = img.height;
+          canvasModified.width = img.width;
+          canvasModified.height = img.height;
+
+          ctxOriginal.drawImage(img, 0, 0);
+          originalImageData = ctxOriginal.getImageData(0, 0, img.width, img.height);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    });
+
+    function chiffrerImage() {
+      if (!originalImageData) return;
+
+      const keyA = parseInt(document.getElementById('imageKeyA').value) || 0;
+      const keyB = parseInt(document.getElementById('imageKeyB').value) || 0;
+      const imageData = new ImageData(
+        new Uint8ClampedArray(originalImageData.data),
+        originalImageData.width,
+        originalImageData.height
+      );
+
+      for (let i = 0; i < imageData.data.length; i += 4) {
+        imageData.data[i]     = (keyA * (imageData.data[i] - 0) + keyB) % 256;
+        imageData.data[i + 1] = (keyA * (imageData.data[i + 1] - 0) + keyB) % 256;
+        imageData.data[i + 2] = (keyA * (imageData.data[i + 2] - 0) + keyB) % 256;
+      }
+
+      ctxModified.putImageData(imageData, 0, 0);
+    }
+
+    function dechiffrerImage() {
+      if (!originalImageData) return;
+
+      const keyA = parseInt(document.getElementById('imageKeyA').value) || 0;
+      const keyB = parseInt(document.getElementById('imageKeyB').value) || 0;
+      const currentImageData = ctxModified.getImageData(0, 0, canvasModified.width, canvasModified.height);
+
+      let keyA_inv = modInverse(keyA, 256);
+
+      if (keyA_inv === -1) {
+        alert('Clé A invalide');
+        return;
+      }
+
+      for (let i = 0; i < currentImageData.data.length; i += 4) {
+        currentImageData.data[i]     = (keyA_inv * (currentImageData.data[i] - keyB + 256)) % 256;
+        currentImageData.data[i + 1] = (keyA_inv * (currentImageData.data[i + 1] - keyB + 256)) % 256;
+        currentImageData.data[i + 2] = (keyA_inv * (currentImageData.data[i + 2] - keyB + 256)) % 256;
+      }
+
+      ctxModified.putImageData(currentImageData, 0, 0);
+    }
+    function enregistrerImage() {
+      const link = document.createElement('a');
+      link.download = 'image_chiffree.png';
+      link.href = canvasModified.toDataURL();
+      link.click();
+    }
+  </script>
+</body>
+</html>

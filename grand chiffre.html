@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Chiffrement Grand Chiffre - Texte et Image</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-image:url('https://new.almalomat.com/wp-content/uploads/2020/01/%D8%AA%D8%B9%D8%B1%D9%8A%D9%81-%D8%B9%D9%84%D9%85-%D8%A7%D9%84%D8%AA%D8%B4%D9%81%D9%8A%D8%B1-.jpg');
+      background-color: #eef2f7;
+      padding: 30px;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 25px;
+      max-width: 950px;
+      margin: auto;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    }
+    .container {
+    background: rgba(255, 255, 255, 0.3); /* شفافية عالية */
+    backdrop-filter: blur(10px); /* تأثير الزجاج */
+    padding: 25px;
+    max-width: 950px;
+    margin: auto;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  }
+
+    h2 {
+      color: #0d0d0e;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .section {
+      margin-bottom: 50px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 8px;
+      color: #0d0d0e;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      margin-bottom: 10px;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #bdc3c7;
+      border-radius: 8px;
+      background-color: #fdfefe;
+    }
+
+    input[type="text"],
+    input[type="file"] {
+      padding: 10px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      background-color: #2980b9;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #1f618d;
+    }
+
+    .images-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .image-container {
+      width: 45%;
+      text-align: center;
+    }
+
+    canvas {
+      max-width: 100%;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    canvas:hover {
+      transform: scale(1.1);
+    }
+
+    @media screen and (max-width: 768px) {
+      .images-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      .image-container {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Texte -->
+    <div class="section">
+      <h2>Chiffrement de Texte - Grand Chiffre</h2>
+      <label>Texte à chiffrer :</label>
+      <textarea id="textInput" placeholder="Entrez le texte ici..."></textarea>
+
+      <div class="buttons">
+        <input type="text" id="textKey" placeholder="Clé (même longueur ou plus)" />
+        <button onclick="chiffrerTexte()">Chiffrer</button>
+        <button onclick="dechiffrerTexte()">Déchiffrer</button>
+        <button onclick="enregistrerImage()">Enregistrer</button>
+      </div>
+
+      <label>Résultat :</label>
+      <textarea id="textOutput" placeholder="Résultat..."></textarea>
+    </div>
+
+    <!-- Image -->
+    <div class="section">
+      <h2>Chiffrement d'Image - Grand Chiffre</h2>
+
+      <div class="buttons">
+        <input type="file" id="imageLoader" accept="image/*">
+        <input type="text" id="imageKey" placeholder="Clé (texte long)" />
+        <button onclick="chiffrerImage()">Chiffrer</button>
+        <button onclick="dechiffrerImage()">Déchiffrer</button>
+        <button onclick="enregistrerImage()">Enregistrer</button>
+      </div>
+
+      <div class="images-container">
+        <div class="image-container">
+          <label>Image originale :</label>
+          <canvas id="canvasOriginal" width="300" height="300"></canvas>
+        </div>
+        <div class="image-container">
+          <label>Image chiffrée :</label>
+          <canvas id="canvasModified" width="300" height="300"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="back-btn">
+    <a href="cloc.html">
+      <button>Retour à l'accueil</button>
+    </a>
+  </div>
+
+
+  <script>
+    // Texte - Grand Chiffre
+    function chiffrerTexte() {
+      const text = document.getElementById('textInput').value;
+      const key = document.getElementById('textKey').value;
+      let result = '';
+      for (let i = 0; i < text.length; i++) {
+        const code = text.charCodeAt(i);
+        const keyChar = key.charCodeAt(i % key.length);
+        result += String.fromCharCode((code + keyChar) % 256);
+      }
+
+      document.getElementById('textOutput').value = result;
+    }
+
+    function dechiffrerTexte() {
+      const text = document.getElementById('textOutput').value;
+      const key = document.getElementById('textKey').value;
+      let result = '';
+
+      for (let i = 0; i < text.length; i++) {
+        const code = text.charCodeAt(i);
+        const keyChar = key.charCodeAt(i % key.length);
+        result += String.fromCharCode((code - keyChar + 256) % 256);
+      }
+
+      document.getElementById('textInput').value = result;
+    }
+
+    // Image - Grand Chiffre
+    const canvasOriginal = document.getElementById('canvasOriginal');
+    const ctxOriginal = canvasOriginal.getContext('2d');
+    const canvasModified = document.getElementById('canvasModified');
+    const ctxModified = canvasModified.getContext('2d');
+    let originalImageData = null;
+
+    document.getElementById('imageLoader').addEventListener('change', function (e) {
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const img = new Image();
+        img.onload = function () {
+          canvasOriginal.width = img.width;
+          canvasOriginal.height = img.height;
+          canvasModified.width = img.width;
+          canvasModified.height = img.height;
+          ctxOriginal.drawImage(img, 0, 0);
+          originalImageData = ctxOriginal.getImageData(0, 0, img.width, img.height);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    });
+
+    function chiffrerImage() {
+      if (!originalImageData) return;
+
+      const key = document.getElementById('imageKey').value;
+      const keyBytes = Array.from(key).map(c => c.charCodeAt(0));
+      const imageData = new ImageData(
+        new Uint8ClampedArray(originalImageData.data),
+        originalImageData.width,
+        originalImageData.height
+      );
+
+      for (let i = 0; i < imageData.data.length; i += 4) {
+        for (let j = 0; j < 3; j++) {
+          const k = keyBytes[(i + j) % keyBytes.length];
+          imageData.data[i + j] = (imageData.data[i + j] + k) % 256;
+        }
+      }
+
+      ctxModified.putImageData(imageData, 0, 0);
+    }
+
+    function dechiffrerImage() {
+      if (!originalImageData) return;
+
+      const key = document.getElementById('imageKey').value;
+      const keyBytes = Array.from(key).map(c => c.charCodeAt(0));
+      const imageData = ctxModified.getImageData(0, 0, canvasModified.width, canvasModified.height);
+
+      for (let i = 0; i < imageData.data.length; i += 4) {
+        for (let j = 0; j < 3; j++) {
+          const k = keyBytes[(i + j) % keyBytes.length];
+          imageData.data[i + j] = (imageData.data[i + j] - k + 256) % 256;
+        }
+      }
+
+      ctxModified.putImageData(imageData, 0, 0);
+    }
+
+    function enregistrerImage() {
+      const link = document.createElement('a');
+      link.download = 'image_chiffree.png';
+      link.href = canvasModified.toDataURL();
+      link.click();
+    }
+  </script>
+</body>
+</html>

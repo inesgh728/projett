@@ -1,0 +1,238 @@
+<!DOCTYPE html><html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Chiffrement Beaufort - Texte et Image</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-image:url('https://new.almalomat.com/wp-content/uploads/2020/01/%D8%AA%D8%B9%D8%B1%D9%8A%D9%81-%D8%B9%D9%84%D9%85-%D8%A7%D9%84%D8%AA%D8%B4%D9%81%D9%8A%D8%B1-.jpg');
+      background-color: #eef2f7;
+      padding: 30px;
+    }
+    .container {
+      background: #ffffff;
+      padding: 25px;
+      max-width: 950px;
+      margin: auto;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    .container {
+    background: rgba(255, 255, 255, 0.3); /* شفافية عالية */
+    backdrop-filter: blur(10px); /* تأثير الزجاج */
+    padding: 25px;
+    max-width: 950px;
+    margin: auto;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  }
+    h2 {
+      color: #0d0d0e;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .section {
+      margin-bottom: 50px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 8px;
+      color: #0d0d0e;
+    }
+    textarea {
+      width: 100%;
+      height: 100px;
+      margin-bottom: 10px;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #bdc3c7;
+      border-radius: 8px;
+      background-color: #fdfefe;
+    }
+    input[type="text"],
+    input[type="file"] {
+      padding: 10px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      background-color: #2980b9;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #1f618d;
+    }
+    .images-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    canvas {
+      max-width: 100%;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    canvas:hover {
+      transform: scale(1.05);
+    }
+
+    .image-container canvas:active {
+      animation: shake 0.4s;
+    }
+
+    @keyframes shake {
+      0% { transform: translate(0px, 0px); }
+      25% { transform: translate(4px, 0px); }
+      50% { transform: translate(-4px, 0px); }
+      75% { transform: translate(4px, 0px); }
+      100% { transform: translate(0px, 0px); }
+    }
+
+    @media screen and (max-width: 768px) {
+      .images-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      .image-container {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Texte -->
+    <div class="section">
+      <h2>Chiffrement de Texte - Méthode Beaufort</h2>
+      <label>Texte à chiffrer :</label>
+      <textarea id="textInput" placeholder="Entrez le texte ici..."></textarea>
+      <div class="buttons">
+        <input type="text" id="textKey" placeholder="Clé (lettres)" />
+        <button onclick="beaufortTextCipher(true)">Chiffrer</button>
+        <button onclick="beaufortTextCipher(false)">Déchiffrer</button>
+        <button onclick="enregistrerImage()">Enregistrer</button>
+      </div>
+      <label>Résultat :</label>
+      <textarea id="textOutput" placeholder="Résultat..."></textarea>
+    </div><!-- Image -->
+<div class="section">
+  <h2>Chiffrement d'Image - Méthode Beaufort</h2>
+  <div class="buttons">
+    <input type="file" id="imageLoader" accept="image/*">
+    <input type="text" id="imageKey" placeholder="Clé (lettres)" />
+    <button onclick="beaufortImageCipher(true)">Chiffrer</button>
+    <button onclick="beaufortImageCipher(false)">Déchiffrer</button>
+    <button onclick="enregistrerImage()">Enregistrer</button>
+  </div>
+  <div class="images-container">
+    <div>
+      <label>Image originale :</label>
+      <canvas id="canvasOriginal" width="300" height="300"></canvas>
+    </div>
+    <div>
+      <label>Image modifiée :</label>
+      <canvas id="canvasModified" width="300" height="300"></canvas>
+    </div>
+  </div>
+</div>
+</div>
+<div class="back-btn">
+    <a href="cloc.html">
+      <button>Retour à l'accueil</button>
+    </a>
+  </div>
+
+
+  <script>
+    function beaufortChar(k, t) {
+      const A = 'A'.charCodeAt(0);
+      k = k.toUpperCase().charCodeAt(0) - A;
+      t = t.toUpperCase().charCodeAt(0) - A;
+      return String.fromCharCode(((k - t + 26) % 26) + A);
+    }function beaufortTextCipher(isEncrypt) {
+  const input = document.getElementById('textInput').value;
+  const key = document.getElementById('textKey').value.toUpperCase();
+  let output = '';
+  let keyIndex = 0;
+
+  for (let i = 0; i < input.length; i++) {
+    const char = input[i];
+    if (/[a-zA-Z]/.test(char)) {
+      const k = key[keyIndex % key.length];
+      output += isEncrypt ? beaufortChar(k, char) : beaufortChar(k, char);
+      keyIndex++;
+    } else {
+      output += char;
+    }
+  }
+  document.getElementById('textOutput').value = output;
+}
+
+const canvasOriginal = document.getElementById('canvasOriginal');
+const ctxOriginal = canvasOriginal.getContext('2d');
+const canvasModified = document.getElementById('canvasModified');
+const ctxModified = canvasModified.getContext('2d');
+let originalImageData = null;
+
+document.getElementById('imageLoader').addEventListener('change', function (e) {
+  const reader = new FileReader();
+  reader.onload = function (event) {
+    const img = new Image();
+    img.onload = function () {
+      const maxWidth = 300;
+      const maxHeight = 300;
+      let scale = Math.min(maxWidth / img.width, maxHeight / img.height);
+      let newWidth = img.width * scale;
+      let newHeight = img.height * scale;
+
+      canvasOriginal.width = newWidth;
+      canvasOriginal.height = newHeight;
+      canvasModified.width = newWidth;
+      canvasModified.height = newHeight;
+
+      ctxOriginal.drawImage(img, 0, 0, newWidth, newHeight);
+      originalImageData = ctxOriginal.getImageData(0, 0, newWidth, newHeight);
+    };
+    img.src = event.target.result;
+  };
+  reader.readAsDataURL(e.target.files[0]);
+});
+
+function beaufortImageCipher(isEncrypt) {
+  if (!originalImageData) return;
+  const key = document.getElementById('imageKey').value.toUpperCase();
+  if (!key) return;
+
+  const data = new Uint8ClampedArray(originalImageData.data);
+  const newData = new Uint8ClampedArray(data);
+
+  for (let i = 0; i < data.length; i += 4) {
+    const k = key[(i / 4) % key.length].charCodeAt(0);
+    newData[i]     = (k - data[i] + 256) % 256;     // R
+    newData[i + 1] = (k - data[i + 1] + 256) % 256; // G
+    newData[i + 2] = (k - data[i + 2] + 256) % 256; // B
+    newData[i + 3] = data[i + 3];                  // A
+  }
+
+  const result = new ImageData(newData, originalImageData.width, originalImageData.height);
+  ctxModified.putImageData(result, 0, 0);
+}
+
+  </script>
+</body>
+</html>

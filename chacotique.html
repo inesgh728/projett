@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Chiffrement Chaotique</title>
+  <style>
+     body {
+      font-family: 'Segoe UI', sans-serif;
+      background-image:url('https://new.almalomat.com/wp-content/uploads/2020/01/%D8%AA%D8%B9%D8%B1%D9%8A%D9%81-%D8%B9%D9%84%D9%85-%D8%A7%D9%84%D8%AA%D8%B4%D9%81%D9%8A%D8%B1-.jpg');
+      background-color: #eef2f7;
+      padding: 30px;
+    }
+
+    .container {
+      background: #ffffff;
+      padding: 25px;
+      max-width: 950px;
+      margin: auto;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    }
+    .container {
+    background: rgba(255, 255, 255, 0.3); /* شفافية عالية */
+    backdrop-filter: blur(10px); /* تأثير الزجاج */
+    padding: 25px;
+    max-width: 950px;
+    margin: auto;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  }
+
+    h2 {
+      color: #121212;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .section {
+      margin-bottom: 50px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 8px;
+      color: #080808;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      margin-bottom: 10px;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #bdc3c7;
+      border-radius: 8px;
+      background-color: #fdfefe;
+    }
+
+    input[type="number"],
+    input[type="file"] {
+      padding: 10px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      background-color: #2980b9;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #1f618d;
+    }
+
+    .images-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    canvas {
+      border: 2px solid #ccc;
+      border-radius: 10px;
+    }
+
+    .center {
+      text-align: center;
+    }
+    canvas {
+      max-width: 100%;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    canvas:hover {
+      transform: scale(1.05);
+    }
+
+    .image-container canvas:active {
+      animation: shake 0.4s;
+    }
+
+    @keyframes shake {
+      0% { transform: translate(0px, 0px); }
+      25% { transform: translate(4px, 0px); }
+      50% { transform: translate(-4px, 0px); }
+      75% { transform: translate(4px, 0px); }
+      100% { transform: translate(0px, 0px); }
+    }
+
+    @media screen and (max-width: 768px) {
+      .images-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      .image-container {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Texte -->
+    <div class="section">
+      <h2>Chiffrement de Texte - Chaotique</h2>
+      <label>Texte à chiffrer :</label>
+      <textarea id="textInput" placeholder="Entrez le texte ici..."></textarea>
+
+      <label>x₀ :</label>
+      <input type="number" id="x0Text" min="0" max="1" step="0.0001" value="0.5">
+      <label>r :</label>
+      <input type="number" id="rText" min="3.57" max="4" step="0.0001" value="3.9">
+      <br>
+      <button onclick="chiffrerTexte()">Chiffrer</button>
+      <button onclick="dechiffrerTexte()">Déchiffrer</button>
+      <button onclick="enregistrerImage()">Enregistrer</button>
+
+      <label>Texte Résultat :</label>
+      <textarea id="textOutput" placeholder="Résultat..."></textarea>
+    </div>
+
+    <!-- Image -->
+    <div class="section">
+      <h2>Chiffrement d'Image - Chaotique</h2>
+      <input type="file" id="imageLoader" accept="image/*">
+      <br>
+      <label>x₀ :</label>
+      <input type="number" id="x0Img" min="0" max="1" step="0.0001" value="0.5">
+      <label>r :</label>
+      <input type="number" id="rImg" min="3.57" max="4" step="0.0001" value="3.9">
+      <br>
+      <button onclick="chiffrerImage()">Chiffrer</button>
+      <button onclick="dechiffrerImage()">Déchiffrer</button>
+      <button onclick="enregistrerImage()">Enregistrer</button>
+
+      <div class="images-container">
+        <div>
+          <label>Image originale :</label>
+          <canvas id="canvasOriginal" width="300" height="300"></canvas>
+        </div>
+        <div>
+          <label>Image transformée :</label>
+          <canvas id="canvasModified" width="300" height="300"></canvas>
+        </div>
+      </div>
+    </div>
+
+    
+   </div>
+  <div class="back-btn">
+    <a href="cloc.html">
+      <button>Retour à l'accueil</button>
+    </a>
+  </div>
+
+  <script>
+    // Logistic Map
+    function generateChaoticSequence(length, x0, r) {
+      const sequence = [];
+      let x = x0;
+      for (let i = 0; i < length; i++) {
+        x = r * x * (1 - x);
+        sequence.push(Math.floor(x * 256) % 256);
+      }
+      return sequence;
+    }
+
+    // Texte
+    function chiffrerTexte() {
+      const text = document.getElementById('textInput').value;
+      const x0 = parseFloat(document.getElementById('x0Text').value);
+      const r = parseFloat(document.getElementById('rText').value);
+      const seq = generateChaoticSequence(text.length, x0, r);
+      let result = '';
+      for (let i = 0; i < text.length; i++) {
+        result += String.fromCharCode(text.charCodeAt(i) ^ seq[i]);
+      }
+      document.getElementById('textOutput').value = result;
+    }
+
+    function dechiffrerTexte() {
+      chiffrerTexte(); // XOR is symmetrical
+    }
+
+    // Image
+    const canvasOriginal = document.getElementById('canvasOriginal');
+    const ctxOriginal = canvasOriginal.getContext('2d');
+    const canvasModified = document.getElementById('canvasModified');
+    const ctxModified = canvasModified.getContext('2d');
+    let originalImageData = null;
+
+    document.getElementById('imageLoader').addEventListener('change', function (e) {
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const img = new Image();
+        img.onload = function () {
+          const scale = Math.min(300 / img.width, 300 / img.height);
+          canvasOriginal.width = img.width * scale;
+          canvasOriginal.height = img.height * scale;
+          canvasModified.width = canvasOriginal.width;
+          canvasModified.height = canvasOriginal.height;
+
+          ctxOriginal.drawImage(img, 0, 0, canvasOriginal.width, canvasOriginal.height);
+          originalImageData = ctxOriginal.getImageData(0, 0, canvasOriginal.width, canvasOriginal.height);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    });
+
+    function processImage() {
+      if (!originalImageData) return;
+
+      const x0 = parseFloat(document.getElementById('x0Img').value);
+      const r = parseFloat(document.getElementById('rImg').value);
+
+      const data = new Uint8ClampedArray(originalImageData.data);
+      const seq = generateChaoticSequence(data.length, x0, r);
+
+      for (let i = 0; i < data.length; i += 4) {
+        data[i]     ^= seq[i];     // R
+        data[i + 1] ^= seq[i + 1]; // G
+        data[i + 2] ^= seq[i + 2]; // B
+        // Alpha inchangé
+      }
+
+      const newImage = new ImageData(data, originalImageData.width, originalImageData.height);
+      ctxModified.putImageData(newImage, 0, 0);
+    }
+
+    function chiffrerImage() {
+      processImage();
+    }
+
+    function dechiffrerImage() {
+      processImage();
+    }
+
+    function downloadImage() {
+      const link = document.createElement('a');
+      link.download = 'image_chaotique.png';
+      link.href = canvasModified.toDataURL();
+      link.click();
+    }
+  </script>
+</body>
+</html>

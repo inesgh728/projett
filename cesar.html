@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Chiffrement César - Texte et Image</title>
+  <style>
+     body {
+      font-family: 'Segoe UI', sans-serif;
+      background-image:url('https://th.bing.com/th/id/R.072e36d56711ffef4d767dc7862bdf7a?rik=BBNzPVbif8dVgw&pid=ImgRaw&r=0');
+      background-color: #eef2f7;
+      padding: 30px;
+    }
+    .container {
+      background: rgba(251, 249, 249, 0.95);
+      padding: 25px;
+      max-width: 950px;
+      margin: auto;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    }
+     .container {
+    background: rgba(255, 255, 255, 0.3); /* شفافية عالية */
+    backdrop-filter: blur(10px); /* تأثير الزجاج */
+    padding: 25px;
+    max-width: 950px;
+    margin: auto;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+  }
+
+    h2 {
+      color: #0f0f10;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .section {
+      margin-bottom: 50px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 8px;
+      color: #040404;
+    }
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      margin-bottom: 10px;
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #bdc3c7;
+      border-radius: 8px;
+      background-color: #fdfefe;
+    }
+
+    input[type="number"],
+    input[type="file"] {
+      padding: 10px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      background-color: #2980b9;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #1f618d;
+    }
+
+    .images-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    canvas {
+      max-width: 100%;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    canvas:hover {
+      transform: scale(1.05);
+    }
+
+    .image-container canvas:active {
+      animation: shake 0.4s;
+    }
+
+    @keyframes shake {
+      0% { transform: translate(0px, 0px); }
+      25% { transform: translate(4px, 0px); }
+      50% { transform: translate(-4px, 0px); }
+      75% { transform: translate(4px, 0px); }
+      100% { transform: translate(0px, 0px); }
+    }
+
+    @media screen and (max-width: 768px) {
+      .images-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      .image-container {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+
+
+  <!-- Musique de fond -->
+  <audio id="backgroundMusic" autoplay loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/12/10/audio_1d2c1f1fd3.mp3?filename=ancient-ambience-126077.mp3" type="audio/mpeg">
+    Votre navigateur ne supporte pas l'audio.
+  </audio>
+
+  <div class="container">
+    <!-- Texte -->
+    <div class="section">
+      <h2>Chiffrement de Texte - Méthode César</h2>
+      <label>Texte à chiffrer :</label>
+      <textarea id="textInput" placeholder="Entrez le texte ici..."></textarea>
+
+      <div class="buttons">
+        <input type="number" id="textKey" placeholder="Clé" />
+        <button onclick="chiffrerTexte()">Chiffrer</button>
+        <button onclick="dechiffrerTexte()">Déchiffrer</button>
+        <button onclick="enregistrerImage()">Enregistrer</button>
+      </div>
+
+      <label>Texte Chiffré :</label>
+      <textarea id="textOutput" placeholder="Résultat..."></textarea>
+    </div>
+
+    <!-- Image -->
+    <div class="section">
+      <h2>Chiffrement d'Image - Méthode César</h2>
+      <div class="buttons">
+        <input type="file" id="imageLoader" accept="image/*">
+        <input type="number" id="imageKey" placeholder="Clé" />
+        <button onclick="chiffrerImage()">Chiffrer</button>
+        <button onclick="dechiffrerImage()">Déchiffrer</button>
+        <button onclick="enregistrerImage()">Enregistrer</button>
+      </div>
+      <div class="images-container">
+        <div>
+          <label>Image originale :</label>
+          <canvas id="canvasOriginal" width="300" height="300"></canvas>
+        </div>
+        <div>
+          <label>Image chiffrée :</label>
+          <canvas id="canvasModified" width="300" height="300"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="back-btn">
+    <a href="cloc.html">
+      <button>Retour à l'accueil</button>
+    </a>
+  </div>
+
+  <script>
+    // Contrôle de la musique
+    function toggleAudio() {
+      const music = document.getElementById("backgroundMusic");
+      const btn = document.getElementById("musicBtn");
+      
+    }
+
+    // --- Texte ---
+    function chiffrerTexte() {
+      const text = document.getElementById('textInput').value;
+      const key = parseInt(document.getElementById('textKey').value)  ;
+      let result = '';
+
+      for (let i = 0; i < text.length; i++) {
+        let code = text.charCodeAt(i);
+        result += String.fromCharCode(code + key);
+      }
+
+      document.getElementById('textOutput').value = result;
+    }
+
+    function dechiffrerTexte() {
+      const text = document.getElementById('textOutput').value;
+      const key = parseInt(document.getElementById('textKey').value)  ;
+      let result = '';
+
+      for (let i = 0; i < text.length; i++) {
+        let code = text.charCodeAt(i);
+        result += String.fromCharCode(code - key);
+      }
+
+      document.getElementById('textInput').value = result;
+    }
+
+    // --- Image ---
+    const canvasOriginal = document.getElementById('canvasOriginal');
+    const ctxOriginal = canvasOriginal.getContext('2d');
+    const canvasModified = document.getElementById('canvasModified');
+    const ctxModified = canvasModified.getContext('2d');
+
+    let originalImageData = null;
+
+    document.getElementById('imageLoader').addEventListener('change', function (e) {
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        const img = new Image();
+        img.onload = function () {
+          const maxWidth = 300;
+          const maxHeight = 300;
+
+          let scale = Math.min(maxWidth / img.width, maxHeight / img.height);
+          let newWidth = img.width * scale;
+          let newHeight = img.height * scale;
+
+          canvasOriginal.width = newWidth;
+          canvasOriginal.height = newHeight;
+          canvasModified.width = newWidth;
+          canvasModified.height = newHeight;
+
+          ctxOriginal.drawImage(img, 0, 0, newWidth, newHeight);
+          originalImageData = ctxOriginal.getImageData(0, 0, newWidth, newHeight);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    });
+
+    function chiffrerImage() {
+      if (!originalImageData) return;
+
+      const key = parseInt(document.getElementById('imageKey').value)  ;
+      const imageData = new ImageData(
+        new Uint8ClampedArray(originalImageData.data),
+        originalImageData.width,
+        originalImageData.height
+      );
+
+      for (let i = 0; i < imageData.data.length; i += 4) {
+        imageData.data[i]     = (imageData.data[i] + key) % 256;
+        imageData.data[i + 1] = (imageData.data[i + 1] + key) % 256;
+        imageData.data[i + 2] = (imageData.data[i + 2] + key) % 256;
+      }
+
+      ctxModified.putImageData(imageData, 0, 0);
+    }
+
+    function dechiffrerImage() {
+      if (!originalImageData) return;
+
+      const key = parseInt(document.getElementById('imageKey').value)  ;
+      const imageData = ctxModified.getImageData(0, 0, canvasModified.width, canvasModified.height);
+      for (let i = 0; i < imageData.data.length; i += 4) {
+        imageData.data[i]     = (imageData.data[i] - key + 256) % 256;
+        imageData.data[i + 1] = (imageData.data[i + 1] - key + 256) % 256;
+        imageData.data[i + 2] = (imageData.data[i + 2] - key + 256) % 256;
+      }
+      ctxModified.putImageData(imageData, 0, 0);
+    }
+
+    function enregistrerImage() {
+      const link = document.createElement('a');
+      link.download = 'image_chiffree.png';
+      link.href = canvasModified.toDataURL();
+      link.click();
+    }
+  </script>
+</body>
+</html>
